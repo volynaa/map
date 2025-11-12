@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import * as THREE from 'three';
 import './Panorama.css'
-import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
+import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 
 interface PanoramaProps {
     isOpen: boolean;
@@ -66,7 +66,6 @@ const Panorama: React.FC<PanoramaProps> = ({
     const controlsRef = useRef<OrbitControls | null>(null);
 
     const lineDataRef = useRef<THREE.Line[]>([]);
-    const polygonDataRef = useRef<THREE.Mesh[]>([]);
     const allLineDataRef = useRef<GeoJSONLineFeature[]>([]);
     const allPolygonDataRef = useRef<GeoJSONPolygonFeature[]>([]);
 
@@ -124,11 +123,6 @@ const Panorama: React.FC<PanoramaProps> = ({
             sceneRef.current?.remove(line);
         });
         lineDataRef.current = [];
-
-        polygonDataRef.current.forEach(polygon => {
-            sceneRef.current?.remove(polygon);
-        });
-        polygonDataRef.current = [];
 
         allLineDataRef.current.forEach((feature, index) => {
             if (feature.geometry.type === 'LineString' &&
@@ -206,8 +200,6 @@ const Panorama: React.FC<PanoramaProps> = ({
                 sceneRef.current?.add(mesh);
                 sceneRef.current?.add(line);
 
-                polygonDataRef.current.push(mesh);
-                polygonDataRef.current.push(line as THREE.Mesh);
             }
         });
     }, [geoToMercator, isLineInRadius, isPolygonInRadius]);
@@ -325,10 +317,6 @@ const Panorama: React.FC<PanoramaProps> = ({
             });
             lineDataRef.current = [];
 
-            polygonDataRef.current.forEach(polygon => {
-                sceneRef.current?.remove(polygon);
-            });
-            polygonDataRef.current = [];
         };
     }, [isOpen, initScene]);
 

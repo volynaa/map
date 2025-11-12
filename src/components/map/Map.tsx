@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Map, View, MapBrowserEvent, Overlay} from 'ol';
+import {Map, View, Overlay} from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 import VectorLayer from 'ol/layer/Vector';
@@ -13,6 +13,7 @@ import 'ol/ol.css';
 import './Map.css'
 import Help from "../UI/Help.tsx";
 import Panorama from "../panorama/Panorama.tsx";
+import type {FeatureLike} from "ol/Feature";
 
 const AdvancedMap: React.FC = () => {
     const mapRef = useRef<HTMLDivElement | null>(null);
@@ -20,10 +21,10 @@ const AdvancedMap: React.FC = () => {
     const [help, setHelp] = useState('');
     const [showPanorama, setShowPanorama] = useState(false);
 
-    function getFeatureInfo(feature: Feature, coordinate: number[]): string {
+    function getFeatureInfo(feature: FeatureLike, coordinate: number[]): string {
         const geometry = feature.getGeometry();
 
-        if (!geometry) return;
+        if (!geometry) return '';
 
         let coordinates: number[] = [];
 
@@ -148,7 +149,7 @@ const AdvancedMap: React.FC = () => {
             overlays: [tooltipOverlay]
         });
 
-        map.on('pointermove', (event: MapBrowserEvent<UIEvent>) => {
+        map.on('pointermove', event => {
             if (!tooltipRef.current) return;
 
             const pixel = event.pixel;
@@ -178,7 +179,7 @@ const AdvancedMap: React.FC = () => {
             }
         });
 
-        map.on('click', (event: MapBrowserEvent<UIEvent>) => {
+        map.on('click', event => {
             const pixel = event.pixel;
             const feature = map.forEachFeatureAtPixel(pixel, (feature) => feature);
 
@@ -198,7 +199,7 @@ const AdvancedMap: React.FC = () => {
             }
         });
 
-        map.on('dblclick', (event: MapBrowserEvent<UIEvent>) => {
+        map.on('dblclick', event => {
             const pixel = event.pixel;
             const feature = map.forEachFeatureAtPixel(pixel, (feature) => feature);
             setHelp('');
@@ -225,7 +226,6 @@ const AdvancedMap: React.FC = () => {
                 data={help}
             />
             <Panorama
-                show={showPanorama}
                 isOpen={showPanorama}
                 onClose={closePanorama}
             />
